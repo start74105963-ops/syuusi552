@@ -2,39 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/database/local_database.dart';
 import '../../core/theme/app_theme.dart';
-import '../auth/auth_provider.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(authProvider).value;
-
     return Scaffold(
       appBar: AppBar(title: const Text('設定')),
       body: ListView(
         children: [
-          // プロフィール
-          if (user != null)
-            _ProfileTile(
-              name: user.displayName ?? 'ゲスト',
-              email: user.email,
-              photoUrl: user.photoUrl,
-            ),
           const _SectionHeader(title: 'データ管理'),
           ListTile(
             leading: const Icon(Icons.delete_outline, color: AppColors.loss),
             title: const Text('全データを削除'),
             subtitle: const Text('すべての実践記録を削除します', style: TextStyle(color: AppColors.onSurfaceMuted, fontSize: 12)),
             onTap: () => _confirmDeleteAll(context, ref),
-          ),
-          const Divider(color: AppColors.cardBorder, indent: 16, endIndent: 16),
-          const _SectionHeader(title: 'アカウント'),
-          ListTile(
-            leading: const Icon(Icons.logout),
-            title: const Text('ログアウト'),
-            onTap: () => ref.read(authProvider.notifier).signOut(),
           ),
           const Divider(color: AppColors.cardBorder, indent: 16, endIndent: 16),
           const _SectionHeader(title: 'アプリ情報'),
@@ -79,45 +62,6 @@ class SettingsScreen extends ConsumerWidget {
       await db.delete('savings');
       await db.delete('savings_history');
     }
-  }
-}
-
-class _ProfileTile extends StatelessWidget {
-  final String name, email;
-  final String? photoUrl;
-  const _ProfileTile({required this.name, required this.email, this.photoUrl});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      margin: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.cardBorder),
-      ),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 28,
-            backgroundImage: photoUrl != null ? NetworkImage(photoUrl!) : null,
-            backgroundColor: AppColors.primary.withValues(alpha: 0.2),
-            child: photoUrl == null ? const Icon(Icons.person, color: AppColors.primary) : null,
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                Text(email, style: const TextStyle(color: AppColors.onSurfaceMuted, fontSize: 12)),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }
 

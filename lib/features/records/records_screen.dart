@@ -7,7 +7,6 @@ import '../../shared/models/record_model.dart';
 import '../../shared/repositories/record_repository.dart';
 import '../../shared/widgets/empty_state.dart';
 import '../../shared/widgets/profit_chip.dart';
-import '../auth/auth_provider.dart';
 import 'record_form_screen.dart';
 
 class RecordsScreen extends ConsumerStatefulWidget {
@@ -29,7 +28,7 @@ class _RecordsScreenState extends ConsumerState<RecordsScreen> {
 
   Future<void> _load() async {
     setState(() => _loading = true);
-    final userId = ref.read(authProvider).value?.id ?? 'local';
+    const userId = 'local_guest';
     final repo = RecordRepository(LocalDatabase());
     final records = await repo.getAll(userId);
     setState(() {

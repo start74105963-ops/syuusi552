@@ -4,6 +4,7 @@ class StoreModel {
   final String name;
   final String? region;
   final String? memo;
+  final int medalPrice; // 1枚あたりの金額（円）
 
   const StoreModel({
     required this.id,
@@ -11,6 +12,7 @@ class StoreModel {
     required this.name,
     this.region,
     this.memo,
+    this.medalPrice = 0,
   });
 
   factory StoreModel.fromMap(Map<String, dynamic> m) => StoreModel(
@@ -19,6 +21,7 @@ class StoreModel {
         name: m['name'] as String,
         region: m['region'] as String?,
         memo: m['memo'] as String?,
+        medalPrice: m['medal_price'] as int? ?? 0,
       );
 
   Map<String, dynamic> toMap() => {
@@ -27,5 +30,6 @@ class StoreModel {
         'name': name,
         'region': region,
         'memo': memo,
+        'medal_price': medalPrice,
       };
 }

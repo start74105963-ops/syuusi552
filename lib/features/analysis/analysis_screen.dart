@@ -7,7 +7,6 @@ import '../../core/utils/format_utils.dart';
 import '../../shared/models/record_model.dart';
 import '../../shared/repositories/record_repository.dart';
 import '../../shared/widgets/profit_chip.dart';
-import '../auth/auth_provider.dart';
 
 class AnalysisScreen extends ConsumerStatefulWidget {
   const AnalysisScreen({super.key});
@@ -38,7 +37,7 @@ class _AnalysisScreenState extends ConsumerState<AnalysisScreen>
 
   Future<void> _load() async {
     setState(() => _loading = true);
-    final userId = ref.read(authProvider).value?.id ?? 'local';
+    const userId = 'local_guest';
     final repo = RecordRepository(LocalDatabase());
     final records = await repo.getByMonth(userId, _selectedMonth.year, _selectedMonth.month);
     setState(() {

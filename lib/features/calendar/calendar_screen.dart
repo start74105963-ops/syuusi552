@@ -7,7 +7,6 @@ import '../../core/utils/format_utils.dart';
 import '../../shared/models/record_model.dart';
 import '../../shared/repositories/record_repository.dart';
 import '../../shared/widgets/profit_chip.dart';
-import '../auth/auth_provider.dart';
 import '../records/record_form_screen.dart';
 
 class CalendarScreen extends ConsumerStatefulWidget {
@@ -23,6 +22,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   Map<DateTime, List<RecordModel>> _events = {};
   List<RecordModel> _selectedRecords = [];
   bool _loading = true;
+  DateTime? _lastTapDay;
+  DateTime? _lastTapTime;
 
   @override
   void initState() {
@@ -34,7 +35,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
   Future<void> _load() async {
     setState(() => _loading = true);
-    final userId = ref.read(authProvider).value?.id ?? 'local';
+    const userId = 'local_guest';
     final repo = RecordRepository(LocalDatabase());
     final records = await repo.getByMonth(userId, _focusedDay.year, _focusedDay.month);
     final map = <DateTime, List<RecordModel>>{};
@@ -49,6 +50,35 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
         _selectedRecords = map[_normalize(_selectedDay!)] ?? [];
       }
     });
+  }
+
+  Future<void> _openForm(DateTime date) async {
+    final result = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(builder: (_) => RecordFormScreen(initialDate: date)),
+    );
+    if (result == true) _load();
+  }
+
+  void _onDayTapped(DateTime selected, DateTime focused) {
+    final now = DateTime.now();
+    final isDoubleTap = _lastTapDay != null &&
+        isSameDay(_lastTapDay!, selected) &&
+        _lastTapTime != null &&
+        now.difference(_lastTapTime!).inMilliseconds < 500;
+
+    if (isDoubleTap) {
+      _lastTapDay = null;
+      _lastTapTime = null;
+      _openForm(selected);
+    } else {
+      _lastTapDay = selected;
+      _lastTapTime = now;
+      setState(() {
+        _selectedDay = selected;
+        _focusedDay = focused;
+        _selectedRecords = _getEventsForDay(selected);
+      });
+    }
   }
 
   List<RecordModel> _getEventsForDay(DateTime day) {
@@ -68,6 +98,10 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(formatMonth(_focusedDay))),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _openForm(_selectedDay ?? DateTime.now()),
+        child: const Icon(Icons.add),
+      ),
       body: Column(
         children: [
           TableCalendar<RecordModel>(
@@ -77,13 +111,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
             focusedDay: _focusedDay,
             selectedDayPredicate: (d) => isSameDay(_selectedDay, d),
             eventLoader: _getEventsForDay,
-            onDaySelected: (selected, focused) {
-              setState(() {
-                _selectedDay = selected;
-                _focusedDay = focused;
-                _selectedRecords = _getEventsForDay(selected);
-              });
-            },
+            onDaySelected: _onDayTapped,
             onPageChanged: (focused) {
               _focusedDay = focused;
               _load();

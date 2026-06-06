@@ -8,7 +8,6 @@ import '../../core/utils/format_utils.dart';
 import '../../shared/models/savings_model.dart';
 import '../../shared/repositories/savings_repository.dart';
 import '../../shared/widgets/empty_state.dart';
-import '../auth/auth_provider.dart';
 
 class SavingsScreen extends ConsumerStatefulWidget {
   const SavingsScreen({super.key});
@@ -29,7 +28,7 @@ class _SavingsScreenState extends ConsumerState<SavingsScreen> {
 
   Future<void> _load() async {
     setState(() => _loading = true);
-    final userId = ref.read(authProvider).value?.id ?? 'local';
+    const userId = 'local_guest';
     final repo = SavingsRepository(LocalDatabase());
     final list = await repo.getAll(userId);
     setState(() {
@@ -60,7 +59,7 @@ class _SavingsScreenState extends ConsumerState<SavingsScreen> {
       ),
     );
     if (result == true && nameCtrl.text.isNotEmpty) {
-      final userId = ref.read(authProvider).value?.id ?? 'local';
+      const userId = 'local_guest';
       final repo = SavingsRepository(LocalDatabase());
       await repo.upsert(SavingsModel(
         id: const Uuid().v4(),
