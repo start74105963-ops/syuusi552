@@ -19,7 +19,7 @@ class LocalDatabase {
     final path = join(dbPath, 'slot_manager.db');
     return openDatabase(
       path,
-      version: 3,
+      version: 4,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -44,6 +44,13 @@ class LocalDatabase {
         collection_medals INTEGER NOT NULL DEFAULT 0,
         collection_cash INTEGER NOT NULL DEFAULT 0,
         medal_price INTEGER NOT NULL DEFAULT 0,
+        setting INTEGER,
+        diff_medals INTEGER,
+        start_g INTEGER,
+        end_g INTEGER,
+        bb_count INTEGER,
+        rb_count INTEGER,
+        at_count INTEGER,
         memo TEXT,
         aim TEXT,
         is_synced INTEGER DEFAULT 0
@@ -104,6 +111,15 @@ class LocalDatabase {
     }
     if (oldVersion < 3) {
       await db.execute('ALTER TABLE records ADD COLUMN aim TEXT');
+    }
+    if (oldVersion < 4) {
+      await db.execute('ALTER TABLE records ADD COLUMN setting INTEGER');
+      await db.execute('ALTER TABLE records ADD COLUMN diff_medals INTEGER');
+      await db.execute('ALTER TABLE records ADD COLUMN start_g INTEGER');
+      await db.execute('ALTER TABLE records ADD COLUMN end_g INTEGER');
+      await db.execute('ALTER TABLE records ADD COLUMN bb_count INTEGER');
+      await db.execute('ALTER TABLE records ADD COLUMN rb_count INTEGER');
+      await db.execute('ALTER TABLE records ADD COLUMN at_count INTEGER');
     }
   }
 
