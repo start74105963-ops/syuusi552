@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static const primary = Color(0xFF6C63FF);
-  static const primaryLight = Color(0xFFEEEDFF);
-  static const win = Color(0xFF22C55E);
-  static const loss = Color(0xFFEF4444);
-  static const even = Color(0xFF94A3B8);
-  static const surface = Color(0xFFFFFFFF);
-  static const surfaceVariant = Color(0xFFF5F5FB);
-  static const background = Color(0xFFF0F0F7);
-  static const onSurface = Color(0xFF1A1A2E);
-  static const onSurfaceMuted = Color(0xFF7878A0);
-  static const cardBorder = Color(0xFFE6E6F2);
+  static const primary        = Color(0xFF2563EB);
+  static const primaryLight   = Color(0xFFEFF6FF);
+  static const win            = Color(0xFF16A34A);
+  static const loss           = Color(0xFFDC2626);
+  static const even           = Color(0xFF6B7280);
+  static const surface        = Color(0xFFFFFFFF);
+  static const surfaceVariant = Color(0xFFF9FAFB);
+  static const background     = Color(0xFFF9FAFB);
+  static const onSurface      = Color(0xFF111827);
+  static const onSurfaceMuted = Color(0xFF6B7280);
+  static const cardBorder     = Color(0xFFE5E7EB);
 }
 
 ThemeData buildLightTheme() {
@@ -36,34 +36,13 @@ ThemeData buildLightTheme() {
     ),
     cardTheme: CardThemeData(
       color: AppColors.surface,
-      elevation: 1,
-      shadowColor: const Color(0x196C63FF),
+      elevation: 0,
+      shadowColor: Colors.transparent,
       surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: const BorderSide(color: AppColors.cardBorder, width: 1),
+        borderRadius: BorderRadius.circular(12),
+        side: const BorderSide(color: AppColors.cardBorder, width: 0.5),
       ),
-    ),
-    navigationBarTheme: NavigationBarThemeData(
-      backgroundColor: AppColors.surface,
-      indicatorColor: AppColors.primaryLight,
-      elevation: 0,
-      shadowColor: const Color(0x14000000),
-      labelTextStyle: WidgetStateProperty.resolveWith((states) {
-        final selected = states.contains(WidgetState.selected);
-        return TextStyle(
-          fontSize: 12,
-          fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-          color: selected ? AppColors.primary : AppColors.onSurfaceMuted,
-        );
-      }),
-      iconTheme: WidgetStateProperty.resolveWith((states) {
-        final selected = states.contains(WidgetState.selected);
-        return IconThemeData(
-          color: selected ? AppColors.primary : AppColors.onSurfaceMuted,
-          size: 24,
-        );
-      }),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
@@ -91,6 +70,7 @@ ThemeData buildLightTheme() {
         elevation: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+        minimumSize: const Size(0, 44),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
@@ -98,25 +78,27 @@ ThemeData buildLightTheme() {
         foregroundColor: AppColors.primary,
         side: const BorderSide(color: AppColors.cardBorder),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        minimumSize: const Size(0, 44),
       ),
     ),
     floatingActionButtonTheme: const FloatingActionButtonThemeData(
       backgroundColor: AppColors.primary,
       foregroundColor: Colors.white,
-      elevation: 4,
+      elevation: 2,
     ),
     dividerTheme: const DividerThemeData(
       color: AppColors.cardBorder,
-      thickness: 1,
+      thickness: 0.5,
     ),
     textTheme: const TextTheme(
-      headlineLarge: TextStyle(color: AppColors.onSurface, fontWeight: FontWeight.bold, fontSize: 28),
-      headlineMedium: TextStyle(color: AppColors.onSurface, fontWeight: FontWeight.bold, fontSize: 22),
-      titleLarge: TextStyle(color: AppColors.onSurface, fontWeight: FontWeight.w600, fontSize: 18),
-      titleMedium: TextStyle(color: AppColors.onSurface, fontWeight: FontWeight.w500, fontSize: 16),
-      bodyLarge: TextStyle(color: AppColors.onSurface, fontSize: 16),
-      bodyMedium: TextStyle(color: AppColors.onSurfaceMuted, fontSize: 14),
-      labelLarge: TextStyle(color: AppColors.onSurface, fontWeight: FontWeight.w600, fontSize: 14),
+      headlineLarge:  TextStyle(color: AppColors.onSurface, fontWeight: FontWeight.bold,   fontSize: 28),
+      headlineMedium: TextStyle(color: AppColors.onSurface, fontWeight: FontWeight.bold,   fontSize: 22),
+      titleLarge:     TextStyle(color: AppColors.onSurface, fontWeight: FontWeight.w600,   fontSize: 18),
+      titleMedium:    TextStyle(color: AppColors.onSurface, fontWeight: FontWeight.w500,   fontSize: 16),
+      bodyLarge:      TextStyle(color: AppColors.onSurface, fontSize: 16),
+      bodyMedium:     TextStyle(color: AppColors.onSurfaceMuted, fontSize: 14),
+      labelLarge:     TextStyle(color: AppColors.onSurface, fontWeight: FontWeight.w600,   fontSize: 14),
+      labelSmall:     TextStyle(color: AppColors.onSurfaceMuted, fontWeight: FontWeight.w400, fontSize: 11),
     ),
   );
 }
