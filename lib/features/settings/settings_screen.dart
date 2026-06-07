@@ -57,10 +57,7 @@ class SettingsScreen extends ConsumerWidget {
       ),
     );
     if (confirmed == true) {
-      final db = await LocalDatabase().db;
-      await db.delete('records');
-      await db.delete('savings');
-      await db.delete('savings_history');
+      await LocalDatabase().deleteAllData();
     }
   }
 }

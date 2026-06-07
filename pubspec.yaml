@@ -15,16 +15,10 @@ dependencies:
   # 状態管理
   flutter_riverpod: ^2.5.1
 
-  # ルーティング
-  go_router: ^14.2.0
-
-  # Supabase
-  supabase_flutter: ^2.5.5
-
   # 認証
   google_sign_in: ^6.2.1
 
-  # ローカルDB（オフライン対応）
+  # ローカルDB（モバイル）
   sqflite: ^2.3.3
   path: ^1.9.0
 
@@ -39,11 +33,7 @@ dependencies:
   gap: ^3.0.1
   cupertino_icons: ^1.0.8
 
-  # 共有
-  share_plus: ^9.0.0
-  url_launcher: ^6.3.0
-
-  # ローカルストレージ
+  # ローカルストレージ（Web対応）
   shared_preferences: ^2.3.2
 
   # UUID生成
