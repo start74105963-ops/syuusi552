@@ -4,7 +4,6 @@ import 'core/theme/app_theme.dart';
 import 'features/analysis/analysis_screen.dart';
 import 'features/home/home_screen.dart';
 import 'features/records/record_form_screen.dart';
-import 'features/records/records_screen.dart';
 import 'features/settings/settings_screen.dart';
 
 class SlotManagerApp extends StatelessWidget {
@@ -35,22 +34,21 @@ class MainShell extends StatefulWidget {
 }
 
 class _MainShellState extends State<MainShell> {
-  // 0=ホーム 1=履歴 2=分析 3=設定
+  // 0=ホーム 1=分析 2=設定
   int _pageIndex = 0;
 
   static const _pages = <Widget>[
     HomeScreen(),
-    RecordsScreen(),
     AnalysisScreen(),
     SettingsScreen(),
   ];
 
-  // ナビバーのインデックス（2=FABなのでずれる）
-  int get _navIndex => _pageIndex >= 2 ? _pageIndex + 1 : _pageIndex;
+  // ナビバー: 0=ホーム 1=FAB 2=分析 3=設定
+  int get _navIndex => _pageIndex == 0 ? 0 : _pageIndex + 1;
 
   void _onNavTap(int navI) {
-    if (navI == 2) return; // FAB は別ハンドラ
-    final pageI = navI > 2 ? navI - 1 : navI;
+    if (navI == 1) return; // FABは別ハンドラ
+    final pageI = navI == 0 ? 0 : navI - 1;
     setState(() => _pageIndex = pageI);
   }
 
@@ -58,7 +56,9 @@ class _MainShellState extends State<MainShell> {
     Navigator.of(context).push(MaterialPageRoute(
       fullscreenDialog: true,
       builder: (_) => RecordFormScreen(initialDate: DateTime.now()),
-    ));
+    )).then((result) {
+      if (result == true && mounted) setState(() {});
+    });
   }
 
   @override
@@ -99,11 +99,10 @@ class _BottomNav extends StatelessWidget {
           height: 60,
           child: Row(
             children: [
-              _NavItem(navI: 0, icon: Icons.home_outlined,    activeIcon: Icons.home,      label: 'ホーム',  selectedIndex: selectedIndex, onTap: onTap),
-              _NavItem(navI: 1, icon: Icons.history_outlined, activeIcon: Icons.history,   label: '履歴',    selectedIndex: selectedIndex, onTap: onTap),
+              _NavItem(navI: 0, icon: Icons.home_outlined,      activeIcon: Icons.home,      label: 'ホーム', selectedIndex: selectedIndex, onTap: onTap),
               _AddButton(onTap: onAdd),
-              _NavItem(navI: 3, icon: Icons.bar_chart_outlined, activeIcon: Icons.bar_chart, label: '分析',  selectedIndex: selectedIndex, onTap: onTap),
-              _NavItem(navI: 4, icon: Icons.settings_outlined, activeIcon: Icons.settings,  label: '設定',   selectedIndex: selectedIndex, onTap: onTap),
+              _NavItem(navI: 2, icon: Icons.bar_chart_outlined, activeIcon: Icons.bar_chart, label: '分析',   selectedIndex: selectedIndex, onTap: onTap),
+              _NavItem(navI: 3, icon: Icons.settings_outlined,  activeIcon: Icons.settings,  label: '設定',   selectedIndex: selectedIndex, onTap: onTap),
             ],
           ),
         ),
