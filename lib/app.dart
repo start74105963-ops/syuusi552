@@ -3,7 +3,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'core/theme/app_theme.dart';
 import 'features/analysis/analysis_screen.dart';
 import 'features/home/home_screen.dart';
-import 'features/records/record_form_screen.dart';
 import 'features/settings/settings_screen.dart';
 
 class SlotManagerApp extends StatelessWidget {
@@ -34,76 +33,34 @@ class MainShell extends StatefulWidget {
 }
 
 class _MainShellState extends State<MainShell> {
-  // 0=ホーム 1=分析 2=設定
   int _pageIndex = 0;
 
-  static const _pages = <Widget>[
+  final _pages = const <Widget>[
     HomeScreen(),
     AnalysisScreen(),
     SettingsScreen(),
   ];
 
-  // ナビバー: 0=ホーム 1=FAB 2=分析 3=設定
-  int get _navIndex => _pageIndex == 0 ? 0 : _pageIndex + 1;
-
-  void _onNavTap(int navI) {
-    if (navI == 1) return; // FABは別ハンドラ
-    final pageI = navI == 0 ? 0 : navI - 1;
-    setState(() => _pageIndex = pageI);
-  }
-
-  void _openForm(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(
-      fullscreenDialog: true,
-      builder: (_) => RecordFormScreen(initialDate: DateTime.now()),
-    )).then((result) {
-      if (result == true && mounted) setState(() {});
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: IndexedStack(index: _pageIndex, children: _pages),
-      bottomNavigationBar: _BottomNav(
-        selectedIndex: _navIndex,
-        onTap: _onNavTap,
-        onAdd: () => _openForm(context),
-      ),
-    );
-  }
-}
-
-// ─── カスタムボトムナビ ────────────────────────────────────────
-class _BottomNav extends StatelessWidget {
-  final int selectedIndex;
-  final ValueChanged<int> onTap;
-  final VoidCallback onAdd;
-
-  const _BottomNav({
-    required this.selectedIndex,
-    required this.onTap,
-    required this.onAdd,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
-        border: Border(top: BorderSide(color: AppColors.cardBorder, width: 0.5)),
-      ),
-      child: SafeArea(
-        top: false,
-        child: SizedBox(
-          height: 60,
-          child: Row(
-            children: [
-              _NavItem(navI: 0, icon: Icons.home_outlined,      activeIcon: Icons.home,      label: 'ホーム', selectedIndex: selectedIndex, onTap: onTap),
-              _AddButton(onTap: onAdd),
-              _NavItem(navI: 2, icon: Icons.bar_chart_outlined, activeIcon: Icons.bar_chart, label: '分析',   selectedIndex: selectedIndex, onTap: onTap),
-              _NavItem(navI: 3, icon: Icons.settings_outlined,  activeIcon: Icons.settings,  label: '設定',   selectedIndex: selectedIndex, onTap: onTap),
-            ],
+      bottomNavigationBar: Container(
+        decoration: const BoxDecoration(
+          color: AppColors.surface,
+          border: Border(top: BorderSide(color: AppColors.cardBorder, width: 0.5)),
+        ),
+        child: SafeArea(
+          top: false,
+          child: SizedBox(
+            height: 60,
+            child: Row(
+              children: [
+                _NavItem(index: 0, icon: Icons.home_outlined, activeIcon: Icons.home, label: 'ホーム', selected: _pageIndex == 0, onTap: () => setState(() => _pageIndex = 0)),
+                _NavItem(index: 1, icon: Icons.bar_chart_outlined, activeIcon: Icons.bar_chart, label: '分析', selected: _pageIndex == 1, onTap: () => setState(() => _pageIndex = 1)),
+                _NavItem(index: 2, icon: Icons.settings_outlined, activeIcon: Icons.settings, label: '設定', selected: _pageIndex == 2, onTap: () => setState(() => _pageIndex = 2)),
+              ],
+            ),
           ),
         ),
       ),
@@ -112,72 +69,40 @@ class _BottomNav extends StatelessWidget {
 }
 
 class _NavItem extends StatelessWidget {
-  final int navI;
-  final IconData icon;
-  final IconData activeIcon;
+  final int index;
+  final IconData icon, activeIcon;
   final String label;
-  final int selectedIndex;
-  final ValueChanged<int> onTap;
+  final bool selected;
+  final VoidCallback onTap;
 
   const _NavItem({
-    required this.navI,
+    required this.index,
     required this.icon,
     required this.activeIcon,
     required this.label,
-    required this.selectedIndex,
+    required this.selected,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final selected = selectedIndex == navI;
     return Expanded(
       child: InkWell(
-        onTap: () => onTap(navI),
+        onTap: onTap,
         borderRadius: BorderRadius.circular(8),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              selected ? activeIcon : icon,
-              size: 24,
-              color: selected ? AppColors.primary : AppColors.onSurfaceMuted,
-            ),
+            Icon(selected ? activeIcon : icon, size: 24,
+                color: selected ? AppColors.primary : AppColors.onSurfaceMuted),
             const SizedBox(height: 2),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-                color: selected ? AppColors.primary : AppColors.onSurfaceMuted,
-              ),
-            ),
+            Text(label,
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+                  color: selected ? AppColors.primary : AppColors.onSurfaceMuted,
+                )),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _AddButton extends StatelessWidget {
-  final VoidCallback onTap;
-  const _AddButton({required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Center(
-        child: GestureDetector(
-          onTap: onTap,
-          child: Container(
-            width: 52,
-            height: 52,
-            decoration: const BoxDecoration(
-              color: AppColors.primary,
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(Icons.add, color: Colors.white, size: 28),
-          ),
         ),
       ),
     );
